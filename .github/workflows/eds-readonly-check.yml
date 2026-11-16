@@ -1,0 +1,24 @@
+name: EDS read-only transfer check
+on:
+  push:
+    branches: [css-refresh-20261117]
+    paths: [.github/workflows/eds-readonly-check.yml]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Generate temporary public transfer key
+        run: |
+          umask 077
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out "$RUNNER_TEMP/eds-transfer-key.pem" 2>/dev/null
+          openssl rsa -in "$RUNNER_TEMP/eds-transfer-key.pem" -modulus -noout
+          echo EDS_PUBLIC_KEY_READY
+      - name: Keep temporary environment ready for check
+        run: |
+          python3 -c "import time; time.sleep(90)"
+      - name: Remove temporary transfer key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/eds-transfer-key.pem"
