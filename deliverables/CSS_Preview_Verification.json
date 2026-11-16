@@ -1,0 +1,64 @@
+{
+  "scope": "Independent CSS previews and fixture patching only. The original EDS app was not accessed or tested.",
+  "css_parse": "PASS",
+  "viewports": [
+    {
+      "page": "input",
+      "width": 1536,
+      "body_horizontal_overflow": false,
+      "browser_errors": 0
+    },
+    {
+      "page": "input",
+      "width": 1280,
+      "body_horizontal_overflow": false,
+      "browser_errors": 0
+    },
+    {
+      "page": "input",
+      "width": 900,
+      "body_horizontal_overflow": false,
+      "browser_errors": 0
+    },
+    {
+      "page": "input",
+      "width": 390,
+      "body_horizontal_overflow": false,
+      "browser_errors": 0
+    },
+    {
+      "page": "result",
+      "width": 1536,
+      "body_horizontal_overflow": false,
+      "browser_errors": 0
+    },
+    {
+      "page": "result",
+      "width": 1280,
+      "body_horizontal_overflow": false,
+      "browser_errors": 0
+    },
+    {
+      "page": "result",
+      "width": 900,
+      "body_horizontal_overflow": false,
+      "browser_errors": 0
+    },
+    {
+      "page": "result",
+      "width": 390,
+      "body_horizontal_overflow": false,
+      "browser_errors": 0
+    }
+  ],
+  "original_app_tested": false,
+  "patch_fixture_checks": [
+    "PASS CSS applied to an independent fixture",
+    "PASS Fixture HTML and JavaScript remain byte-identical",
+    "PASS Original CSS bytes preserved in backup",
+    "PASS Repeat application makes no duplicate change",
+    "PASS Invalid target rejected without writing",
+    "PASS Ambiguous targets rejected without writing"
+  ],
+  "evidence_url": "https://github.com/wns7314-star/eds-material-assistant/actions/runs/43978536315"
+}

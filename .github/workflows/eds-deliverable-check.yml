@@ -1,0 +1,32 @@
+name: Verify downloadable CSS preview archive
+on:
+  push:
+    branches: [css-refresh-20261117]
+    paths: ["deliverables/EDS_CSS_Theme_Preview.zip", ".github/workflows/eds-deliverable-check.yml"]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check downloadable archive against verified theme files
+        run: |
+          git clone --depth 1 --branch css-refresh-20261117 https://github.com/wns7314-star/eds-material-assistant.git work
+          cd work
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile
+          package=Path("deliverables/EDS_CSS_Theme_Preview.zip")
+          with zipfile.ZipFile(package) as z:
+              assert z.testzip() is None, "ZIP CRC check failed"
+              assert len(z.namelist()) == 9
+              for item in z.infolist():
+                  path=Path(item.filename)
+                  assert len(path.parts)==2 and path.parts[0]=="EDS_CSS_Theme_Preview"
+                  name=path.name
+                  base=Path("deliverables") if name.endswith(".png") or name.endswith(".json") else Path("theme")
+                  assert z.read(item.filename)==(base/name).read_bytes(), name+" differs from the verified file"
+          print("PASS: all 9 packaged files have valid CRCs and match the verified theme, images and report.")
+          print("Original EDS application and EXE were not modified or tested.")
+          PY
