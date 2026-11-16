@@ -1,0 +1,50 @@
+name: Verify EDS CSS preview without application source
+on:
+  push:
+    branches: [css-refresh-20261117]
+    paths: ["theme/**", ".github/workflows/eds-css-preview.yml"]
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Fetch only the public theme branch
+        run: git clone --depth 1 --branch css-refresh-20261117 https://github.com/wns7314-star/eds-material-assistant.git work
+      - name: Install browser for independent CSS preview
+        working-directory: work
+        run: |
+          npm install --no-audit --no-fund playwright css-tree
+          npx playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Verify patch safety on synthetic files
+        working-directory: work
+        run: python3 theme/validate_patch.py
+      - name: Verify CSS and capture independent previews
+        working-directory: work
+        run: node theme/render_previews.cjs
+      - name: Package theme files
+        working-directory: work
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile
+          out=Path("deliverables")
+          out.mkdir(exist_ok=True)
+          with zipfile.ZipFile(out/"EDS_CSS_Theme_Preview.zip","w",zipfile.ZIP_DEFLATED) as z:
+              for p in sorted(Path("theme").glob("*")):
+                  if p.is_file() and p.suffix not in {".cjs"} and p.name != "validate_patch.py":
+                      z.write(p,"EDS_CSS_Theme_Preview/"+p.name)
+              for p in sorted(out.glob("*.png")):
+                  z.write(p,"EDS_CSS_Theme_Preview/"+p.name)
+              z.write(out/"CSS_Preview_Verification.json","EDS_CSS_Theme_Preview/CSS_Preview_Verification.json")
+          PY
+      - name: Save theme preview deliverables
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: EDS-CSS-Theme-Preview
+          path: work/deliverables/
+          if-no-files-found: ignore
+          retention-days: 90
