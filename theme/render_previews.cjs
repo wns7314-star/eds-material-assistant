@@ -21,6 +21,13 @@ const assert=require('assert');
    const metrics=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,width:window.innerWidth,heading:getComputedStyle(document.querySelector('h1')).fontSize}));
    assert(metrics.scroll<=width+1,kind+' body horizontal overflow at '+width+': '+JSON.stringify(metrics));
    assert.equal(errors.length,0);
+   if(kind==='result'){
+    const colors=await page.evaluate(()=>({
+      normal:getComputedStyle(document.querySelector('#cmp-matrix thead tr:first-child th:nth-child(2)')).backgroundColor,
+      defect:getComputedStyle(document.querySelector('#cmp-matrix thead tr:nth-child(2) th:nth-child(2)')).backgroundColor
+    }));
+    assert.notEqual(colors.normal,colors.defect,'Normal-only highlight must not spread to a defect column');
+   }
    report.viewports.push({page:kind,width,body_horizontal_overflow:false,browser_errors:0});
    if(width===1536){
     const name=kind==='input'?'EDS_CSS_Input_Preview.png':'EDS_CSS_Result_Preview.png';
