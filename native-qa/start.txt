@@ -1,0 +1,1 @@
+Authorized native Windows EXE validation; read-only workflow; encrypted inputs and results.
