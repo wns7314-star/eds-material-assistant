@@ -1,1 +1,1 @@
-Authorized native Windows EXE validation; read-only workflow; encrypted inputs and results.
+Native verification attempt 2: correct QA harness path quoting; application unchanged.
